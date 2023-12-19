@@ -1,23 +1,23 @@
 const connect = require("../connect");
 const { DataTypes } = require("sequelize");
 
-const PackageModel = connect.define("package", {
+const MemberModel = connect.define("member", {
     id: {
         type: DataTypes.BIGINT,
         primaryKey: true,
         autoIncrement: true
     },
+    packageId: {
+        type: DataTypes.BIGINT
+    },
     name: {
-        type: DataTypes.STRING(255),
+        type: DataTypes.STRING(255)
     },
-    bill_amount: {
-        type: DataTypes.BIGINT
-    },
-    price: {
-        type: DataTypes.BIGINT
+    phone: {
+        type: DataTypes.STRING(255)
     }
 })
 
-// PackageModel.sync({alter:true});
+// MemberModel.sync({alter:true});
 
-module.exports = PackageModel;
+module.exports = MemberModel;
