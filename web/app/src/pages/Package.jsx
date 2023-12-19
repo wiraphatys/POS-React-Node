@@ -57,6 +57,7 @@ const Package = () => {
                             })
                             setName('');
                             setPhone('');
+                            document.getElementById("btnModalClose").click();
                         }
                     }).catch(err => {
                         throw err.response.data;
