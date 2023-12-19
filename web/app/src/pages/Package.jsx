@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import axios from "axios";
 import config from '../config';
+import Modal from '../components/Modal';
 
 const Package = () => {
     const [packages, setPackages] = useState([]);
+    const [yourPackage, setYourPackage] = useState({});
 
     useEffect(() => {
         fetchData();
@@ -20,6 +22,11 @@ const Package = () => {
             console.log(e.message);
         }
     }
+
+    const choosenPackage = (item) => {
+        setYourPackage(item);
+    }
+
     return (
         <div>
             <div className="container mt-2">
@@ -27,21 +34,38 @@ const Package = () => {
                 <div className="h4 mb-3">Our Packages</div>
                 <div className="row">
                     {packages.map(item =>
-                    <div className="col-4">
-                        <div className="card">
-                            <div className="card-body text-center">
-                                <div className='h4 text-success mb-3'>{item.name}</div>
-                                <div className='h5'>{parseInt(item.bill_amount).toLocaleString()} bill/month</div>
-                                <div className='h5 text-secondary'>{parseInt(item.price).toLocaleString()} THB</div>
-                                <div className="mt-3">
-                                    <button className='btn btn-primary'>register</button>
+                        <div className="col-4">
+                            <div className="card">
+                                <div className="card-body text-center">
+                                    <div className='h4 text-success mb-3'>{item.name}</div>
+                                    <div className='h5'>{parseInt(item.bill_amount).toLocaleString()} bill/month</div>
+                                    <div className='h5 text-secondary'>{parseInt(item.price).toLocaleString()} THB</div>
+                                    <div className="mt-3">
+                                        <button onClick={e => choosenPackage(item)} type="button" className="btn btn-primary" data-toggle="modal" data-target="#modalRegister">register</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                     )}
                 </div>
             </div>
+            <Modal id="modalRegister" title="Service Registration">
+                <form>
+                    <div>
+                        <label>Selected Package</label>
+                        <div className='alert alert-info'>{yourPackage.name}: {yourPackage.price} THB/month</div>
+                    </div>
+                    <div>
+                        <label>Shop/Restaurent Name</label>
+                        <input type="text" className='form-control' />
+                    </div>
+                    <div className='mt-2'>
+                        <label>Phone Number</label>
+                        <input type='text' className='form-control' />
+                    </div>
+                    <button className='btn btn-success mt-3'>confirm</button>
+                </form>
+            </Modal>
         </div>
     )
 }
