@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react'
 import axios from "axios";
 import config from '../config';
 import Modal from '../components/Modal';
+import Swal from "sweetalert2";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Package = () => {
     const [packages, setPackages] = useState([]);
     const [yourPackage, setYourPackage] = useState({});
+    const [name, setName] = useState('');
+    const [phone, setPhone] = useState('');
 
     useEffect(() => {
         fetchData();
@@ -25,6 +29,43 @@ const Package = () => {
 
     const choosenPackage = (item) => {
         setYourPackage(item);
+    }
+
+    const handleRegister = async (e) => {
+        e.preventDefault();
+        try {
+            Swal.fire({
+                title: "register confirmation",
+                text: "please confirm register of the service",
+                icon: "question",
+                showCancelButton: true,
+                showConfirmButton: true
+            }).then(res => {
+                if (res.isConfirmed) {
+                    const payload = {
+                        packageId: yourPackage.id,
+                        name: name,
+                        phone: phone
+                    }
+                    axios.post(config.api_path + "/package/memberRegister", payload).then(res => {
+                        if (res.data.message === "success") {
+                            Swal.fire({
+                                title: "register successfully",
+                                text: "We're already saved your register request.",
+                                icon: "success",
+                                timer: 2000
+                            })
+                            setName('');
+                            setPhone('');
+                        }
+                    }).catch(err => {
+                        throw err.response.data;
+                    })
+                }
+            })
+        } catch (e) {
+            console.log(e.message);
+        }
     }
 
     return (
@@ -50,20 +91,24 @@ const Package = () => {
                 </div>
             </div>
             <Modal id="modalRegister" title="Service Registration">
-                <form>
+                <form onSubmit={handleRegister}>
                     <div>
                         <label>Selected Package</label>
                         <div className='alert alert-info'>{yourPackage.name}: {yourPackage.price} THB/month</div>
                     </div>
                     <div>
                         <label>Shop/Restaurent Name</label>
-                        <input type="text" className='form-control' />
+                        <input onChange={e => setName(e.target.value)} value={name} type="text" className='form-control' />
                     </div>
                     <div className='mt-2'>
                         <label>Phone Number</label>
-                        <input type='text' className='form-control' />
+                        <input onChange={e => setPhone(e.target.value)} value={phone} type='text' className='form-control' />
                     </div>
-                    <button className='btn btn-success mt-3'>confirm</button>
+                    <div className='mt-3'>
+                        <button className='btn btn-success' onClick={handleRegister}>
+                            confirm
+                        </button>
+                    </div>
                 </form>
             </Modal>
         </div>

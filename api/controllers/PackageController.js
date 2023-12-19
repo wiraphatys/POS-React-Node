@@ -16,7 +16,11 @@ app.get("/packages/list", async (req, res) => {
 
 app.post("/package/memberRegister", async(req, res) => {
     try {
-        const result = await MemberModel.create();
+        const result = await MemberModel.create({
+            packageId: req.body.packageId,
+            name: req.body.name,
+            phone: req.body.phone
+        });
         res.send({message: "success", result: result});
     } catch(e) {
         res.statusCode(500).send({message: e.message});
