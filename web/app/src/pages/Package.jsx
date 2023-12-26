@@ -4,12 +4,16 @@ import config from '../config';
 import Modal from '../components/Modal';
 import Swal from "sweetalert2";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
 
 const Package = () => {
     const [packages, setPackages] = useState([]);
     const [yourPackage, setYourPackage] = useState({});
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
+    const [password, setPassword] = useState('');
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetchData();
@@ -45,7 +49,8 @@ const Package = () => {
                     const payload = {
                         packageId: yourPackage.id,
                         name: name,
-                        phone: phone
+                        phone: phone,
+                        pass: password
                     }
                     axios.post(config.api_path + "/package/memberRegister", payload).then(res => {
                         if (res.data.message === "success") {
@@ -58,6 +63,7 @@ const Package = () => {
                             setName('');
                             setPhone('');
                             document.getElementById("btnModalClose").click();
+                            navigate("/login");
                         }
                     }).catch(err => {
                         throw err.response.data;
@@ -65,7 +71,11 @@ const Package = () => {
                 }
             })
         } catch (e) {
-            console.log(e.message);
+            Swal.fire({
+                title: "error",
+                message: e.message,
+                icon: "error"
+            })
         }
     }
 
@@ -100,6 +110,10 @@ const Package = () => {
                     <div>
                         <label>Shop/Restaurent Name</label>
                         <input onChange={e => setName(e.target.value)} value={name} type="text" className='form-control' />
+                    </div>
+                    <div className="mt-2">
+                        <label>Password</label>
+                        <input onChange={e => setPassword(e.target.value)} value={password} type='password' className='form-control' />
                     </div>
                     <div className='mt-2'>
                         <label>Phone Number</label>

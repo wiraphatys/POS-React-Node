@@ -10,8 +10,10 @@ const cors = require("cors");
 app.use(cors());
 
 const PackageController = require("./controllers/PackageController");
+const MemberController = require("./controllers/MemberController");
 
 app.use(PackageController);
+app.use(MemberController);
 
 app.listen(port, () => {
     console.log(`this server is running on port ${port}`);

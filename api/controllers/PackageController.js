@@ -19,6 +19,7 @@ app.post("/package/memberRegister", async(req, res) => {
         const result = await MemberModel.create({
             packageId: req.body.packageId,
             name: req.body.name,
+            pass: req.body.pass,
             phone: req.body.phone
         });
         res.send({message: "success", result: result});

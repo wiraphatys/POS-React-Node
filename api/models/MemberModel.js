@@ -15,9 +15,12 @@ const MemberModel = connect.define("member", {
     },
     phone: {
         type: DataTypes.STRING(255)
+    },
+    pass: {
+        type: DataTypes.STRING(255)
     }
 })
 
-// MemberModel.sync({alter:true});
+MemberModel.sync({alter:true});
 
 module.exports = MemberModel;
