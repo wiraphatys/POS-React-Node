@@ -16,10 +16,12 @@ app.post("/member/signin", async (req, res) => {
             let token = jwt.sign({id: member[0].id}, process.env.secret);
             res.send({token: token, message: "success"});
         } else {
-            res.send({status: 401, message: "not found"});
+            res.statusCode = 401;
+            res.send({message: "not found"});
         }
     } catch (e) {
-        res.send({message: e.message})
+        res.statusCode = 500;
+        res.send({message: e.message});
     }
 })
 
