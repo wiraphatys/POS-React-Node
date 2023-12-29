@@ -9,11 +9,9 @@ app.use(bodyParser.json());
 const cors = require("cors");
 app.use(cors());
 
-const PackageController = require("./controllers/PackageController");
-const MemberController = require("./controllers/MemberController");
-
-app.use(PackageController);
-app.use(MemberController);
+app.use(require("./controllers/PackageController"));
+app.use(require("./controllers/MemberController"));
+app.use(require("./controllers/ProductController"));
 
 app.listen(port, () => {
     console.log(`this server is running on port ${port}`);
