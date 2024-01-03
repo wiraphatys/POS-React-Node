@@ -73,6 +73,44 @@ function Product() {
     }
   }
 
+  const handleDelete = (item) => {
+    Swal.fire({
+      title: "Delete Confirmation",
+      text: "Are you sure to delete this item?",
+      icon: "question",
+      showCancelButton: true,
+      showConfirmButton: true,
+    }).then(async (res) => {
+      if (res.isConfirmed) {
+        try {
+          const response = await axios.delete(
+            `${config.api_path}/product/delete/${item.id}`,
+            config.getHeaders()
+          );
+
+          if (response.data.message === "success") {
+            fetchData();
+            Swal.fire({
+              title: "Deleted Data",
+              text: "Deleted data successfully.",
+              timer: 2000,
+              icon: "success",
+            });
+          } else {
+            throw new Error("Failed to delete data");
+          }
+        } catch (e) {
+          Swal.fire({
+            title: "Error",
+            icon: "error",
+            text: e.message || "Failed to delete data",
+          });
+        }
+      }
+    });
+  };
+
+
   return (
     <div>
       <Template>
@@ -109,7 +147,7 @@ function Product() {
                     <button className='btn btn-success mr-2 ml-4'>
                       <i className='fa fa-pencil-alt'></i>
                     </button>
-                    <button className='btn btn-danger'>
+                    <button onClick={e => handleDelete(item)} className='btn btn-danger'>
                       <i className='fa fa-times'></i>
                     </button>
                   </td>
