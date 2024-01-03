@@ -3,7 +3,7 @@ import Template from '../components/Template'
 import Swal from "sweetalert2";
 import axios from 'axios';
 import config from '../config';
-import { useState , useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from '../components/Modal';
 
 function Product() {
@@ -34,7 +34,12 @@ function Product() {
     e.preventDefault();
 
     try {
-      await axios.post(config.api_path + "/product/insert", product, config.getHeaders()).then(res => {
+      let url = config.api_path + "/product/insert";
+
+      if (product.id !== undefined) {
+        url = config.api_path + "/product/update";
+      }
+      await axios.post(url, product, config.getHeaders()).then(res => {
         if (res.data.message === "success") {
           Swal.fire({
             title: "Save",
@@ -136,22 +141,25 @@ function Product() {
                 </tr>
               </thead>
               <tbody>
-                { allProducts.length > 0 ? allProducts.map(item =>
-                <tr>
-                  <td>{item.barcode}</td>
-                  <td>{item.name}</td>
+                {allProducts.length > 0 ? allProducts.map(item =>
+                  <tr>
+                    <td>{item.barcode}</td>
+                    <td>{item.name}</td>
                     <td className='text-right'>{parseFloat(item.price).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                     <td className='text-right'>{parseFloat(item.cost).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                  <td>{item.detail}</td>
-                  <td>
-                    <button className='btn btn-success mr-2 ml-4'>
-                      <i className='fa fa-pencil-alt'></i>
-                    </button>
-                    <button onClick={e => handleDelete(item)} className='btn btn-danger'>
-                      <i className='fa fa-times'></i>
-                    </button>
-                  </td>
-                </tr>
+                    <td>{item.detail}</td>
+                    <td>
+                      <button onClick={e => setProduct(item)}
+                        data-toggle="modal"
+                        data-target="#ModalProduct"
+                        className='btn btn-success mr-2 ml-4'>
+                        <i className='fa fa-pencil-alt'></i>
+                      </button>
+                      <button onClick={e => handleDelete(item)} className='btn btn-danger'>
+                        <i className='fa fa-times'></i>
+                      </button>
+                    </td>
+                  </tr>
                 ) : ''}
               </tbody>
             </table>
