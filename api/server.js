@@ -12,6 +12,7 @@ app.use(cors());
 app.use(require("./controllers/PackageController"));
 app.use(require("./controllers/MemberController"));
 app.use(require("./controllers/ProductController"));
+app.use(require("./controllers/ProductImageController"));
 
 app.listen(port, () => {
     console.log(`this server is running on port ${port}`);

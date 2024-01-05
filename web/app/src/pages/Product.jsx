@@ -9,6 +9,8 @@ import Modal from '../components/Modal';
 function Product() {
   const [product, setProduct] = useState({});
   const [allProducts, setAllProducts] = useState([]);
+  const [productImage, setProductImage] = useState({});
+  const [productImages, setProductImages] = useState([]);
 
   useEffect(() => {
     fetchData();
@@ -115,6 +117,50 @@ function Product() {
     });
   };
 
+  const handleChangeFile = (files) => {
+    setProductImage(files[0]);
+  }
+
+  const handleUpload = async () => {
+    try {
+      console.log(config.token_name);
+      const _config = {
+        headers: {
+          "Authorization": "Bearer " + localStorage.getItem(config.token_name),
+          "Content-Type": "multipart/form-data"
+        }
+      };
+
+      const formData = new FormData();
+      formData.append("productImage", productImage);
+      formData.append("productImageName", productImage.name);
+
+      axios.post(config.api_path + "/productImage/insert", formData, _config).then(res => {
+        if (res.data.message === "success") {
+          Swal.fire({
+            title: "Image Uploaded",
+            text: "uploaded image successfully.",
+            timer: 2000,
+            icon: 'success'
+          })
+
+          fetchDataProductImage();
+        }
+      })
+
+    } catch (e) {
+      Swal.fire({
+        title: "error",
+        text: e.message,
+        icon: "error"
+      })
+    }
+  }
+
+  const fetchDataProductImage = async () => {
+
+  }
+
 
   return (
     <div>
@@ -124,7 +170,7 @@ function Product() {
             <div className="card-title h4">Product</div>
           </div>
           <div className="card-body">
-            <button className='btn btn-primary' data-toggle="modal" data-target="#ModalProduct" >
+            <button className='btn btn-primary' data-toggle="modal" data-target="#modalProduct" >
               <i className='fa fa-plus mr-2'></i>
               Add
             </button>
@@ -137,7 +183,7 @@ function Product() {
                   <th className='text-right'>Selling Price</th>
                   <th className='text-right'>Cost Price</th>
                   <th>Description</th>
-                  <th width="150px"></th>
+                  <th width="200px"></th>
                 </tr>
               </thead>
               <tbody>
@@ -149,10 +195,17 @@ function Product() {
                     <td className='text-right'>{parseFloat(item.cost).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                     <td>{item.detail}</td>
                     <td>
+                      <button 
+                        onClick={e => setProduct(item)}
+                        data-toggle="modal"
+                        data-target="#modalProductImage"
+                        className='btn btn-primary ml-3'>
+                        <i className='fa fa-images'></i>
+                      </button>
                       <button onClick={e => setProduct(item)}
                         data-toggle="modal"
-                        data-target="#ModalProduct"
-                        className='btn btn-success mr-2 ml-4'>
+                        data-target="#modalProduct"
+                        className='btn btn-secondary mx-2'>
                         <i className='fa fa-pencil-alt'></i>
                       </button>
                       <button onClick={e => handleDelete(item)} className='btn btn-danger'>
@@ -167,7 +220,7 @@ function Product() {
         </div>
       </Template>
 
-      <Modal id="ModalProduct" title="Add New Product" modalSize="modal-lg">
+      <Modal id="modalProduct" title="Add New Product" modalSize="modal-lg">
         <form onSubmit={handleSave}>
           <div className="row">
             <div className="mt-3 col-3">
@@ -200,6 +253,48 @@ function Product() {
             </button>
           </div>
         </form>
+      </Modal>
+
+      <Modal id="modalProductImage" title="Product Image" modalSize="modal-lg">
+
+        <div className="row mt-2">
+          <div className="col-4">
+            <div className="input-group">
+              <div className="input-group-text">Barcode</div>
+              <input value={product.barcode} disabled className='form-control' />
+            </div>
+          </div>
+          <div className="col-8">
+            <div className="input-group">
+              <div className="input-group-text">Name</div>
+              <input value={product.name} disabled className='form-control' />
+            </div>
+          </div>
+        </div>
+
+        <div className="row mt-3">
+          <div className="col-12">
+            <div className="input-group">
+              <div className="input-group-text">Description</div>
+              <input value={product.detail} disabled className='form-control' />
+            </div>
+          </div>
+        </div>
+        
+        <div className="row mt-3">
+          <div className="col-12">
+            <input onChange={e => handleChangeFile(e.target.files)} type='file' name='imageName' className='form-control' />
+          </div>
+        </div>
+
+        <div className='mt-3'>
+          { productImage.name !== undefined ?
+          <button onClick={handleUpload} className='btn btn-primary'>
+            <i className='fa fa-check mr-2'></i>
+            Upload
+          </button>
+          : ''}
+        </div>
       </Modal>
     </div>
   )
