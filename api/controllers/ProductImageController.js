@@ -12,13 +12,32 @@ app.get("/productImage/list/:productId", service.isLogin, async (req, res) => {
 
 app.post("/productImage/insert", service.isLogin, async (req, res) => {
     try {
-        const productImage = req.files.productImage;
-        const uploadPath = `${__dirname}/../uploads/${productImage.name}`;
+        const myDate = new Date();
+        const y = myDate.getFullYear();
+        const m = myDate.getMonth() + 1;
+        const d = myDate.getDate();
+        const h = myDate.getHours();
+        const mn = myDate.getMinutes();
+        const s = myDate.getSeconds();
+        const ms = myDate.getMilliseconds();
 
-        await productImage.mv(uploadPath, err => {
+        const productImage = req.files.productImage;
+        const newName = `${y}-${m}-${d}-${h}-${mn}-${s}-${ms}`;
+        const arr = productImage.name.split('.');
+        const ext = arr[arr.length-1];
+        const fullNewName = `${newName}.${ext}`;
+        const uploadPath = `${__dirname}/../uploads/${fullNewName}`;
+
+        await productImage.mv(uploadPath, async err => {
             if (err) {
                 throw new Error(err);
             }
+            await ProductImageModel.create({
+                productId: req.body.productId,
+                imageName: fullNewName,
+                isMain: false,
+            })
+
             res.send({message: "success"});
         })
     } catch (e) {

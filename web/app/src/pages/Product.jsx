@@ -134,6 +134,7 @@ function Product() {
       const formData = new FormData();
       formData.append("productImage", productImage);
       formData.append("productImageName", productImage.name);
+      formData.append("productId", product.id);
 
       axios.post(config.api_path + "/productImage/insert", formData, _config).then(res => {
         if (res.data.message === "success") {
@@ -145,6 +146,8 @@ function Product() {
           })
 
           fetchDataProductImage();
+
+          handleClose();
         }
       })
 
